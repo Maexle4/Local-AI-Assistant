@@ -29,6 +29,9 @@ OLLAMA_EXECUTABLE_PATH = r"C:\Pfad\Zu\Deinem\Ollama\ollama.exe"
 
 #Nanoleaf-Name, wie er im Netzwerk erscheint (z.B. "Shapes 9121")
 NANOLEAF_NAME = "Shapes 9121"
+
+# Index des Mikrofon-Eingabegeräts
+INPUT_DEVICE_INDEX = 3
 # ==========================================
 
 class NanoleafListener(ServiceListener):
@@ -222,7 +225,7 @@ stream = mic.open(
     channels=1,
     rate=48000,
     input=True,
-    input_device_index=3,
+    input_device_index=INPUT_DEVICE_INDEX,
     frames_per_buffer=1024
 )
 stream.start_stream()
