@@ -1,6 +1,7 @@
 # AI-Computer (Local Offline Voice Assistant)
 
 This project implements a privacy-focused, local voice assistant for Windows. It listens for the wake-word "Computer", responds using a synthetic Text-to-Speech (TTS) voice, fetches weather data via an API, and controls Nanoleaf lights within your local network. Complex open-ended questions are processed entirely locally using Ollama.
+It's main use is in German, but you can change it to your language in the code.
 
 ## Features
 - 100% Local Speech-to-Text (STT): Powered by Vosk for offline speech recognition.
