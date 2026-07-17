@@ -96,6 +96,3 @@ Das Skript prüft nun im Hintergrund, ob Ollama läuft (und startet es gegebenen
 * "Computer, Licht an!" / "Computer, Licht aus!"
 * "Computer, warum ist der Himmel blau?" (Leitet die Frage an das lokale KI-Modell weiter)
 
-```
-
-```
