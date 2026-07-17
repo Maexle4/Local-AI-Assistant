@@ -1,4 +1,3 @@
-```markdown```
 # Lokaler Offline-Sprachassistent (Wake-Word: "Computer")
 
 Dieses Projekt implementiert einen datenschutzfreundlichen, lokalen Sprachassistenten für Windows. Er hört auf das Aktivierungswort "Computer", antwortet mit einer synthetischen Stimme (TTS), liest Wetterdaten über eine API aus und steuert Nanoleaf-Lichter in deinem lokalen Netzwerk. Komplexe Freitext-Fragen werden vollständig lokal über Ollama verarbeitet.
