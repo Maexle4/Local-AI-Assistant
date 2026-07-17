@@ -1,90 +1,90 @@
-# Lokaler Offline-Sprachassistent (Wake-Word: "Computer")
+# AI-Computer (Local Offline Voice Assistant)
 
-Dieses Projekt implementiert einen datenschutzfreundlichen, lokalen Sprachassistenten für Windows. Er hört auf das Aktivierungswort "Computer", antwortet mit einer synthetischen Stimme (TTS), liest Wetterdaten über eine API aus und steuert Nanoleaf-Lichter in deinem lokalen Netzwerk. Komplexe Freitext-Fragen werden vollständig lokal über Ollama verarbeitet.
+This project implements a privacy-focused, local voice assistant for Windows. It listens for the wake-word "Computer", responds using a synthetic Text-to-Speech (TTS) voice, fetches weather data via an API, and controls Nanoleaf lights within your local network. Complex open-ended questions are processed entirely locally using Ollama.
 
 ## Features
-- 100% Lokales Speech-to-Text (STT): Nutzt Vosk zur Offline-Spracherkennung.
-- Lokales KI-Modell: Verarbeitet allgemeine Fragen über Ollama (gemma4:e2b).
-- Wetter-Integration: Aktuelle Vorhersagen und Regenberichte via OpenWeatherMap.
-- Smart-Home-Steuerung: Automatische Erkennung und Schaltung von Nanoleaf-Geräten (z. B. Shapes).
-- Sprachausgabe (TTS): Antwortet direkt auf Deutsch über die Systemstimme.
+- 100% Local Speech-to-Text (STT): Powered by Vosk for offline speech recognition.
+- Local AI Model: Handles general knowledge questions locally via Ollama (gemma4:e2b).
+- Weather Integration: Accurate current forecasts and rain reports via OpenWeatherMap.
+- Smart Home Control: Automatic discovery and toggling of Nanoleaf devices (e.g., Shapes).
+- Text-to-Speech (TTS): Responds directly in German using the system's native voice.
 
 ---
 
-## Voraussetzungen & Installation
+## Prerequisites & Installation
 
-### 1. Windows-Abhängigkeiten (PyAudio)
-Da die direkte Installation von PyAudio unter Windows manchmal fehlschlägt, installiere es am besten über pipwin:
+### 1. Windows Dependencies (PyAudio)
+Since installing PyAudio directly on Windows can sometimes fail, it is highly recommended to install it using pipwin:
 ```bash
 pip install pipwin
 pipwin install pyaudio
+
 ```
 
+### 2. Install Python Libraries
 
-### 2. Python-Bibliotheken installieren
-
-Installiere alle weiteren benötigten Pakete mit folgendem Befehl:
+Install all other required packages with the following command:
 
 ```bash
 pip install vosk pyttsx3 requests langchain-core langchain-ollama nanoleafapi zeroconf
 
 ```
 
-### 3. Vosk Sprachmodell herunterladen
+### 3. Download the Vosk Speech Model
 
-Für die Spracherkennung musst du das Modell lediglich herunterladen und im Projekt ablegen. Es ist kein Training oder zusätzliche Installation notwendig:
+For speech recognition to function, you simply need to download the model and place it into your project. No training or extra installation is required:
 
-1. Lade das Modell `vosk-model-small-de-0.15` von Vosk Models (https://alphacephei.com/vosk/models) herunter.
-2. Entpacke den heruntergeladenen Ordner in dein Projektverzeichnis.
-3. Benenne den entpackten Ordner exakt in `model_small` um.
+1. Download the `vosk-model-small-de-0.15` model from Vosk Models (https://alphacephei.com/vosk/models).
+2. Extract the downloaded folder into your main project directory.
+3. Rename the extracted folder exactly to `model_small`.
 
-### 4. Ollama einrichten
+### 4. Set Up Ollama
 
-1. Installiere Ollama für Windows (https://ollama.com/).
-2. Öffne dein Terminal und lade das im Code hinterlegte Modell herunter:
+1. Install Ollama for Windows (https://ollama.com/).
+2. Open your terminal and download the model specified in the code:
 ```bash
 ollama pull gemma4:e2b
 
 ```
 
 
-(Falls du ein anderes Modell wie llama3 nutzen möchtest, passe einfach den Namen im Python-Skript bei OllamaLLM(model="...") an).
+(If you prefer to use a different model like llama3, simply change the model name inside the Python script where `OllamaLLM(model="...")` is defined).
 
 ---
 
-## Konfiguration
+## Configuration
 
-Öffne die Hauptdatei deines Skripts und passe den oberen Konfigurationsblock an deine Umgebung an:
+Open the main file of your script and adjust the configuration block at the top to match your environment:
 
 ```python
 # ==========================================
-# KONFIGURATION & GEHEIMNISSE (ZUM ANPASSEN)
+# CONFIGURATION & SECRETS (CUSTOMIZE HERE)
 # ==========================================
-OPENWEATHER_API_KEY = "DEIN_API_KEY_HIER"  # Kostenlos auf openweathermap.org erstellen
-LATITUDE = "50.0"                          # Deine Breitengrad-Koordinate
-LONGITUDE = "0.0"                         # Deine Längengrad-Koordinate
+OPENWEATHER_API_KEY = "YOUR_API_KEY_HERE"  # Create for free on openweathermap.org
+LATITUDE = "50.0"                          # Your latitude coordinate
+LONGITUDE = "0.0"                          # Your longitude coordinate
 
-# Absoluter Pfad zur ollama.exe, damit das Skript Ollama bei Bedarf starten kann
-OLLAMA_EXECUTABLE_PATH = r"C:\Pfad\Zu\Deinem\Ollama\ollama.exe"
+# Absolute path to ollama.exe so the script can launch Ollama if it isn't running
+OLLAMA_EXECUTABLE_PATH = r"C:\Path\To\Your\Ollama\ollama.exe"
 
-# Nanoleaf-Name, wie er im Netzwerk erscheint
+# Nanoleaf name as it appears in your network
 NANOLEAF_NAME = "Shapes 9121"
 
-# Index des Mikrofon-Eingabegeräts
+# Index of your microphone input device
 INPUT_DEVICE_INDEX = 3
 # ==========================================
 
 ```
 
-### Wie finde ich meinen INPUT_DEVICE_INDEX?
+### How to find your INPUT_DEVICE_INDEX
 
-Um herauszufinden, welche Nummer (Index) dein Mikrofon hat, kannst du dieses kurze Hilfsskript in einer separaten Python-Datei ausführen:
+To find out which ID (index) belongs to your microphone, you can run this short helper script in a separate Python file:
 
 ```python
 import pyaudio
 
 p = pyaudio.PyAudio()
-print("Verfügbare Audio-Eingabegeräte:")
+print("Available audio input devices:")
 for i in range(p.get_device_count()):
     dev = p.get_device_info_by_index(i)
     if dev.get('maxInputChannels') > 0:
@@ -93,26 +93,27 @@ p.terminate()
 
 ```
 
-Lass dir die Liste im Terminal ausgeben, suche dein gewünschtes Mikrofon und trage die zugehörige Index-Nummer oben bei `INPUT_DEVICE_INDEX` ein.
+Run the script, check the terminal output for your desired microphone, and enter its corresponding index number into the `INPUT_DEVICE_INDEX` variable above.
 
-> Wichtig für Nanoleaf: Beim allerersten Start des Skripts sucht das Programm nach deinem Nanoleaf-Panel. Halte den Power-Button an deinem Nanoleaf-Controller für ca. 5-7 Sekunden gedrückt (bis die LEDs blinken), um den Kopplungsmodus zu aktivieren. Das Skript generiert dann automatisch ein dauerhaftes Authentifizierungs-Token.
+> Important for Nanoleaf: During the very first launch, the program will look for your Nanoleaf panel. Press and hold the power button on your Nanoleaf controller for about 5-7 seconds (until the LEDs start flashing) to enable pairing mode. The script will then automatically generate a permanent authentication token.
 
 ---
 
-## Benutzung
+## Usage
 
-Starte das Skript über dein Terminal:
+Start the script via your terminal:
 
 ```bash
 python main.py
 
 ```
 
-Das Skript prüft nun im Hintergrund, ob Ollama läuft (und startet es gegebenenfalls), verbindet sich mit dem Mikrofon über den konfigurierten Index und wartet auf dich.
+The script will check in the background if Ollama is running (and launch it if necessary), connect to your microphone using the configured index, and start listening for your commands.
 
-**Sprachbefehle (Immer mit "Computer" beginnen):**
+**Voice Commands (Always start with "Computer"):**
 
-* "Computer, wie wird das Wetter heute?"
-* "Computer, wird es morgen regnen?"
-* "Computer, Licht an!" / "Computer, Licht aus!"
-* "Computer, warum ist der Himmel blau?" (Leitet die Frage an das lokale KI-Modell weiter)
+* "Computer, wie wird das Wetter heute?" (Computer, how is the weather today?)
+* "Computer, wird es morgen regnen?" (Computer, will it rain tomorrow?)
+* "Computer, Licht an!" / "Computer, Licht aus!" (Computer, turn the light on! / turn the light off!)
+* "Computer, warum ist der Himmel blau?" (Computer, why is the sky blue? -> forwards the question to your local AI model)
+
