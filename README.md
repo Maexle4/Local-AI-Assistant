@@ -69,9 +69,31 @@ OLLAMA_EXECUTABLE_PATH = r"C:\Pfad\Zu\Deinem\Ollama\ollama.exe"
 
 # Nanoleaf-Name, wie er im Netzwerk erscheint
 NANOLEAF_NAME = "Shapes 9121"
+
+# Index des Mikrofon-Eingabegeräts
+INPUT_DEVICE_INDEX = 3
 # ==========================================
 
 ```
+
+### Wie finde ich meinen INPUT_DEVICE_INDEX?
+
+Um herauszufinden, welche Nummer (Index) dein Mikrofon hat, kannst du dieses kurze Hilfsskript in einer separaten Python-Datei ausführen:
+
+```python
+import pyaudio
+
+p = pyaudio.PyAudio()
+print("Verfügbare Audio-Eingabegeräte:")
+for i in range(p.get_device_count()):
+    dev = p.get_device_info_by_index(i)
+    if dev.get('maxInputChannels') > 0:
+        print(f"Index {i}: {dev.get('name')}")
+p.terminate()
+
+```
+
+Lass dir die Liste im Terminal ausgeben, suche dein gewünschtes Mikrofon und trage die zugehörige Index-Nummer oben bei `INPUT_DEVICE_INDEX` ein.
 
 > Wichtig für Nanoleaf: Beim allerersten Start des Skripts sucht das Programm nach deinem Nanoleaf-Panel. Halte den Power-Button an deinem Nanoleaf-Controller für ca. 5-7 Sekunden gedrückt (bis die LEDs blinken), um den Kopplungsmodus zu aktivieren. Das Skript generiert dann automatisch ein dauerhaftes Authentifizierungs-Token.
 
@@ -86,7 +108,7 @@ python main.py
 
 ```
 
-Das Skript prüft nun im Hintergrund, ob Ollama läuft (und startet es gegebenenfalls), verbindet sich mit dem Mikrofon und wartet auf dich.
+Das Skript prüft nun im Hintergrund, ob Ollama läuft (und startet es gegebenenfalls), verbindet sich mit dem Mikrofon über den konfigurierten Index und wartet auf dich.
 
 **Sprachbefehle (Immer mit "Computer" beginnen):**
 
@@ -94,4 +116,3 @@ Das Skript prüft nun im Hintergrund, ob Ollama läuft (und startet es gegebenen
 * "Computer, wird es morgen regnen?"
 * "Computer, Licht an!" / "Computer, Licht aus!"
 * "Computer, warum ist der Himmel blau?" (Leitet die Frage an das lokale KI-Modell weiter)
-
